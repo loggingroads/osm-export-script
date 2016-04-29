@@ -1,0 +1,6 @@
+TODO:
+Script for downloading rep files based on state file
+Script for first load - run for each country
+Script for filtering and updating
+ogr2ogr osm to gis data
+osm2pgsql applying county level changes to pg db

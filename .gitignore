@@ -1,5 +1,4 @@
 pbf/*
-poly/*.poly
 data/*
 test_updates/*
 *.pbf
