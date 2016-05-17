@@ -7,7 +7,16 @@
 #http://planet.openstreetmap.org/replication/[day|hour|minute]/AAA/BBB/CCC.osc.gz
 #The AAA/BBB/CCC are equivalent to a sequence number, AAA*1000000 + BBB*1000 + CCC
 #The latest osm update file is stored with this sequence number in the filename
-#This allows you determine the file to update in the sequence
+
+#The current country file is stored with the most recent sequence number in the filename
+#This script just adds one to the sequence number and applies the relevant update file
+
+#TODO - what happens if file doesn't exist
+#TODO - how many updates to keep
+#TODO - Convert to o5m should already be done, with only highways
+#e.g: 
+#osmconvert pbf/"$var".pbf -o="$var".o5m
+#osmfilter "$var".o5m --keep="highway=*" --out-o5m > $highway_file
 
 
 for var in "$@"
@@ -32,7 +41,7 @@ do
     current_seq_no=${current_seq_str%".o5m"}
     echo "current: " $current_seq_no
     next_seq_no=$((10#$current_seq_no + 1))
-    echo $next_seq_no
+    echo "next: " $next_seq_no
     lpad_seq=$(printf "%0*d" 9 $next_seq_no)
 
 
@@ -40,15 +49,9 @@ do
     updated_highway_file=current/"$var"_"$lpad_seq".o5m
     polygon_file=poly/ne_"$var".poly
 
-    #Convert to o5m should already be done
-    #osmconvert pbf/"$var".pbf -o="$var".o5m
-
-    # Filter to highways
-    #osmfilter "$var".o5m --keep="highway=*" --out-o5m > $highway_file
 
     # Apply a changefile 
     osmconvert "$current_highway_file" minute_replication/"$lpad_seq".osc.gz -B=$polygon_file -o=$temp_updated_file
-
     osmfilter $temp_updated_file --keep="highway=*" --out-o5m > $updated_highway_file 
 
 done
